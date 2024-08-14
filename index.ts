@@ -1,5 +1,10 @@
 import { Client, GatewayIntentBits } from "discord.js";
 import AI from "@anthropic-ai/sdk";
+import path from "path";
+
+const SystemPrompt = await Bun.file(
+  path.resolve(import.meta.dir, "./prompts/systemPrompt.md")
+).text();
 
 const client = new AI({
   apiKey: Bun.env.CLAUDE_API_KEY,
@@ -38,6 +43,7 @@ discord.on("messageCreate", async (message) => {
           content: message.content,
         },
       ],
+      system: SystemPrompt,
     });
     if (assistantMessage.content[0].type === "text") {
       await res.edit(assistantMessage.content[0].text);
