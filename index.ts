@@ -87,10 +87,11 @@ discord.on("messageCreate", async (message) => {
               res.edit("わからん！");
             }
           } else {
-            console.log(assistantMessage);
+            res.edit("おわり〜");
           }
         } catch (err) {
           console.log(err);
+          res.edit("エラーみたい");
         }
       }
     }
