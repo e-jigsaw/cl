@@ -79,6 +79,7 @@ discord.on("messageCreate", async (message) => {
             model: "claude-3-5-sonnet-20240620",
             max_tokens: 1024,
             messages,
+            system: SystemPrompt,
           });
           if (assistantMessage.content.length > 0) {
             if (assistantMessage.content[0].type === "text") {
