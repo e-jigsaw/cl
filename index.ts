@@ -28,6 +28,7 @@ discord.on("messageCreate", async (message) => {
   }
   if (message.content === "!ping") {
     await message.channel.send("pong");
+    return;
   }
   if (message.channelId === Bun.env.DISCORD_CHANNEL_ID) {
     const thread = await message.startThread({
@@ -50,6 +51,7 @@ discord.on("messageCreate", async (message) => {
     } else {
       await res.edit("わからん！");
     }
+    return;
   }
   if (message.channel.isThread()) {
     if (message.channel.parentId === Bun.env.DISCORD_CHANNEL_ID) {
@@ -72,18 +74,27 @@ discord.on("messageCreate", async (message) => {
               content: msg.content,
             })),
         ] as Array<{ role: "user" | "assistant"; content: string }>;
-        const assistantMessage = await client.messages.create({
-          model: "claude-3-5-sonnet-20240620",
-          max_tokens: 1024,
-          messages,
-        });
-        if (assistantMessage.content[0].type === "text") {
-          res.edit(assistantMessage.content[0].text);
-        } else {
-          res.edit("わからん！");
+        try {
+          const assistantMessage = await client.messages.create({
+            model: "claude-3-5-sonnet-20240620",
+            max_tokens: 1024,
+            messages,
+          });
+          if (assistantMessage.content.length > 0) {
+            if (assistantMessage.content[0].type === "text") {
+              res.edit(assistantMessage.content[0].text);
+            } else {
+              res.edit("わからん！");
+            }
+          } else {
+            console.log(assistantMessage);
+          }
+        } catch (err) {
+          console.log(err);
         }
       }
     }
+    return;
   }
 });
 
